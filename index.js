@@ -2,20 +2,26 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const cors = require("cors");
-const fileUpload = require('express-fileupload');
+const fileUpload = require("express-fileupload");
+const connectDB = require("./config/dbConnect");
 
 //use cors
 app.use(cors());
 //use json encode
 app.use(express.json({ extended: false }));
 // enable files upload
-app.use(fileUpload({
-  createParentPath: true
-}));
+app.use(
+  fileUpload({
+    createParentPath: true,
+  })
+);
 
+//connect to DB
+connectDB.connect();
 
 //routes
 app.use("/api/client", require("./routes/client"));
+app.use("api/users", require("./routes/users"));
 
 //resolve static folder for react app
 app.use(express.static("front-app/build"));

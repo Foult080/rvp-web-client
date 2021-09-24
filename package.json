@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index",
-    "server": "nodemon index" 
+    "server": "nodemon index"
   },
   "repository": {
     "type": "git",
@@ -23,10 +23,14 @@
   },
   "homepage": "https://github.com/Foult080/rvp-web-client#readme",
   "dependencies": {
+    "bcrypt": "^5.0.1",
+    "config": "^3.3.6",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-fileupload": "^1.2.1",
-    "express-validator": "^6.12.1"
+    "express-validator": "^6.12.1",
+    "jsonwebtoken": "^8.5.1",
+    "mysql2": "^2.3.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.12"

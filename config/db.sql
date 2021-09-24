@@ -1,5 +1,8 @@
+CREATE DATABASE app;
+use app;
+
 CREATE TABLE `Users` (
-  `id` int PRIMARY KEY AUTO_INCREMENT,
+  `id` BINARY(36) PRIMARY KEY,
   `name` text,
   `email` text,
   `password` text,
@@ -7,8 +10,8 @@ CREATE TABLE `Users` (
 );
 
 CREATE TABLE `web_sites` (
-  `id` int PRIMARY KEY AUTO_INCREMENT,
-  `id_user` int,
+  `id` BINARY(36) PRIMARY KEY,
+  `id_user` BINARY(36),
   `name` text,
   `created_at` datetime DEFAULT (now())
 );

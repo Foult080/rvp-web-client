@@ -1,7 +1,7 @@
 {
-  "host": "192.168.70.5",
-  "user": "appuser",
-  "password": "pass",
+  "host": "localhost",
+  "user": "app_user",
+  "password": "password",
   "database": "app",
   "jwt": "Big_secret"
 }

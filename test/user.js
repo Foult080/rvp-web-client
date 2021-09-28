@@ -5,11 +5,11 @@ const should = chai.should();
 
 chai.use(chaiHttp);
 describe("User route", () => {
-  describe("POST /", () => {
+  describe("add user", () => {
     it("it should return token", (done) => {
       let user = {
-        name: "John Doe",
-        email: "johnDoe@gmail.com",
+        name: "Admin",
+        email: "foult080@gmail.com",
         password: "somePass",
       };
       chai
@@ -37,7 +37,7 @@ describe("User route", () => {
     it("after send not valid email it shoud return error", (done) => {
       let user = {
         name: "John Doe",
-        email: "johnDoe@gmail",
+        email: "foult080@gmail",
         password: "somePass",
       };
       chai
@@ -55,7 +55,7 @@ describe("User route", () => {
     it("after send existing user it shoud return error", (done) => {
       let user = {
         name: "John Doe",
-        email: "johnDoe@gmail.com",
+        email: "foult080@gmail.com",
         password: "somePass",
       };
       chai
@@ -69,6 +69,53 @@ describe("User route", () => {
           res.body.errors[0].should.have.property("msg");
           done();
         });
+    });
+  });
+  describe("reset password", () => {
+    it("shoud return error after sending not valid email", (done) => {
+      let user = {
+        email: "foult080@gmail",
+      };
+      chai
+        .request(server)
+        .put("/api/users/restore")
+        .send(user)
+        .end((err, res) => {
+          res.should.have.status(400);
+          res.body.should.have.property("errors");
+          res.body.errors.should.be.a("array");
+          res.body.errors[0].should.have.property("msg");
+          done();
+        });
+    });
+    it("shoud return error after sending non existing user", (done) => {
+      let user = {
+        email: "foult0802@gmail.com",
+      };
+      chai
+        .request(server)
+        .put("/api/users/restore")
+        .send(user)
+        .end((err, res) => {
+          res.should.have.status(404);
+          res.body.should.have.property("errors");
+          res.body.errors.should.be.a("array");
+        });
+      done();
+    });
+    it("shoud return ok message", (done) => {
+      let user = {
+        email: "foult080@gmail.com",
+      };
+      chai
+        .request(server)
+        .put("/api/users/restore")
+        .send(user)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.a("object");
+        });
+      done();
     });
   });
 });

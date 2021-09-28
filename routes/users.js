@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const config = require("config");
 const mysql = require("mysql2/promise");
-const dbConfig = require("../config/db.config");
+const dbConfig = require("../config/db.config2");
 const { check, validationResult } = require("express-validator");
 const { v4: genID } = require("uuid");
 const bcrypt = require("bcrypt");
@@ -12,7 +12,6 @@ const nodemailer = require("nodemailer");
 /**
  * @route POST api/users
  * @desc register new user
- * TODO: need make tests
  */
 router.post(
   "/",
@@ -97,33 +96,67 @@ router.put(
     }
     //get data drom req
     const { email } = req.body;
+
+    const connection = await mysql.createConnection(dbConfig);
     try {
-      //TODO: credentials for sender email
-      const transporter = nodemailer.createTransport({
-        host: "smtp.yandex.ru",
-        port: 465,
-        secure: true,
-        auth: {
-          user: "foult080@kraskrit.ru",
-          pass: ";/JycnAc7@;E=2%",
-        },
-      });
-      //send email
-      await transporter.sendMail({
-        from: "foult080@kraskrit.ru",
-        to: email,
-        subject: "Восстановление пароля",
-        html: "<b>Hello world!</b>",
-      });
-      //send message to client
-      res
-        .status(200)
-        .json({ msg: "Ссылка для восстановления пароля отправлена на вашу почту", variant: "success" });
+      //check existing email
+      let checkQuery = `SELECT id FROM Users WHERE email = "${email}" ;`;
+      let [rows] = await connection.execute(checkQuery);
+      const data = rows[0];
+      if (!data.id) {
+        res.status(404).json({
+          errors: [{ msg: "Пользователь не найден", variant: "danger" }],
+        });
+      } else {
+        const transporter = nodemailer.createTransport({
+          host: "smtp.yandex.ru",
+          port: 465,
+          secure: true,
+          auth: {
+            user: config.get("mailer_user"),
+            pass: config.get("mailer_pass"),
+          },
+        });
+        //send email
+        transporter.sendMail({
+          from: "foult080@kraskrit.ru",
+          to: email,
+          subject: "Восстановление пароля",
+          html: `<h1>Здравтсвуйте, спасибо что обратились в поддержку.</h1><p>Перейдите по следующей ссылке для восстановления пароля: www.some-url.com/restore/${data.id}</p>`,
+        });
+        //send message to client
+        res.status(200).json({
+          msg: "Ссылка для восстановления пароля отправлена на вашу почту",
+          variant: "success",
+        });
+      }
     } catch {
       console.error(error.message);
       res.status(500).json({ errors: [{ msg: "Ошибка сервера" }] });
     }
   }
 );
+
+/**
+ * @route DELETE api/users/id
+ * @desc delete user
+ * TODO: need make tests
+ */
+router.delete("/:id", async function (req, res) {
+  const connection = await mysql.createConnection(dbConfig);
+  const id = req.params.id;
+  try {
+    let query = `DELETE FROM Users WHERE id="${id}"`;
+    await connection.query(query);
+    connection.end();
+    res.status(200).json({
+      msg: "Пользователь удалён",
+      variant: "success",
+    });
+  } catch {
+    console.error(error.message);
+    res.status(500).json({ errors: [{ msg: "Ошибка сервера" }] });
+  }
+});
 
 module.exports = router;

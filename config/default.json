@@ -1,7 +1,5 @@
 {
-  "host": "localhost",
-  "user": "app_user",
-  "password": "password",
-  "database": "app",
+  "mailer_user": "foult080@kraskrit.ru",
+  "mailer_pass": ";/JycnAc7@;E=2%",
   "jwt": "Big_secret"
 }

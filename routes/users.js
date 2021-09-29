@@ -8,6 +8,7 @@ const { v4: genID } = require("uuid");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
+const auth = require("../middleware/auth");
 
 /**
  * @route POST api/users
@@ -45,7 +46,6 @@ router.post(
         const salt = await bcrypt.genSalt(10);
         let newPassword = await bcrypt.hash(password, salt);
         let userID = genID();
-        console.log(userID.length);
         //save user record
         await connection.execute(
           `INSERT INTO Users (id,name,email, password) VALUES ('${userID}','${name}','${email}', '${newPassword}')`
@@ -78,7 +78,6 @@ router.post(
 /**
  * @route POST api/users/restore
  * @desc send restore email to user
- * TODO: need make tests
  */
 router.put(
   "/restore",
@@ -142,7 +141,7 @@ router.put(
  * @desc delete user
  * TODO: need make tests
  */
-router.delete("/:id", async function (req, res) {
+router.delete("/:id", auth, async function (req, res) {
   const connection = await mysql.createConnection(dbConfig);
   const id = req.params.id;
   try {

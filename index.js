@@ -20,6 +20,7 @@ app.use(
 //routes
 app.use("/api/client", require("./routes/client"));
 app.use("/api/users", require("./routes/users"));
+app.use("/api/auth", require("./routes/auth"));
 
 //resolve static folder for react app
 app.use(express.static("front-app/build"));

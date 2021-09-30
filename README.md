@@ -1,2 +1,3 @@
 # rvp-web-client
-web client for testing webpages for RVP's groups
+Web client for testing webpages. 
+Created for RVP's groups.

@@ -26,8 +26,8 @@ const isMatch = (password, userPass) => {
 router.post(
   "/",
   [
-    check("email", "Укажите корректный Email адрес").isEmpty().not().isEmail(),
-    check("password", "Укажите правильный пароль от записи").isEmpty().not(),
+    check("email", "Укажите корректный Email адрес").not().isEmpty().isEmail(),
+    check("password", "Укажите правильный пароль от записи").not().isEmpty(),
   ],
   async (req, res) => {
     //check errors
@@ -53,7 +53,7 @@ router.post(
           },
         };
         //TODO: expires in
-        jwt.sign(
+        await jwt.sign(
           payload,
           config.get("jwt"),
           { expiresIn: 36000 },

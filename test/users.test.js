@@ -3,7 +3,18 @@ const chaiHttp = require("chai-http");
 const server = require("../index");
 const should = chai.should();
 
+//mysql dependencies
+const mysql = require("mysql2/promise");
+const dbConfig = require("../config/db.config2");
+
 chai.use(chaiHttp);
+
+//delete user after test
+const deleteUser = async () => {
+  const connection = await mysql.createConnection(dbConfig);
+  let sql = `DELETE FROM Users WHERE email = "admin@gmail.com"`;
+  connection.execute(sql);
+};
 
 //testing user route
 describe("User route", () => {
@@ -11,7 +22,7 @@ describe("User route", () => {
     it("it should return token", (done) => {
       let user = {
         name: "Admin",
-        email: "foult080@gmail.com",
+        email: "admin@gmail.com",
         password: "somePass",
       };
       chai
@@ -39,7 +50,7 @@ describe("User route", () => {
     it("after send not valid email it shoud return error", (done) => {
       let user = {
         name: "John Doe",
-        email: "foult080@gmail",
+        email: "admin@gmail",
         password: "somePass",
       };
       chai
@@ -57,7 +68,7 @@ describe("User route", () => {
     it("after send existing user it shoud return error", (done) => {
       let user = {
         name: "John Doe",
-        email: "foult080@gmail.com",
+        email: "admin@gmail.com",
         password: "somePass",
       };
       chai
@@ -76,7 +87,7 @@ describe("User route", () => {
   describe("reset password", () => {
     it("shoud return error after sending not valid email", (done) => {
       let user = {
-        email: "foult080@gmail",
+        email: "admin@gmail",
       };
       chai
         .request(server)
@@ -90,7 +101,7 @@ describe("User route", () => {
           done();
         });
     });
-    it("shoud return error after sending non existing user", (done) => {
+    it("shoud return error after sending not existing user", (done) => {
       let user = {
         email: "foult0802@gmail.com",
       };
@@ -118,57 +129,7 @@ describe("User route", () => {
           res.body.should.be.a("object");
         });
       done();
-    });
-  });
-});
-
-//testing auth route
-describe("AUTH route", () => {
-  describe("get token", () => {
-    it("it should return token", (done) => {
-      let user = {
-        email: "foult080@gmail.com",
-        password: "12345678",
-      };
-      chai
-        .request(server)
-        .post("/api/auth")
-        .send(user)
-        .end((err, res) => {
-          res.should.have.status(200);
-          res.body.should.be.a("object");
-          res.body.should.have.property("token");
-          done();
-        });
-    });
-    it("shoud return error if user does not exist", (done) => {
-      let user = {
-        email: "foult0808@gmail.com",
-        password: "12345678",
-      };
-      chai
-        .request(server)
-        .post("/api/auth")
-        .send(user)
-        .end((err, res) => {
-          res.should.have.status(401);
-          res.body.should.have.property("errors");
-          res.body.errors.should.be.a("array");
-        });
-      done();
-    });
-    it("shoud return error after sending not valid email", (done) => {
-      chai
-        .request(server)
-        .post("/api/auth")
-        .send(user)
-        .end((err, res) => {
-          res.should.have.status(400);
-          res.body.should.have.property("errors");
-          res.body.errors.should.be.a("array");
-          res.body.errors[0].should.have.property("msg");
-        });
-      done();
+      deleteUser();
     });
   });
 });

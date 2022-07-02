@@ -4,7 +4,7 @@ const router = express.Router();
 //validator
 const { check, validationResult } = require("express-validator");
 //check authentication
-const auth = require("../middleware/Auth");
+const auth = require("../middleware/auth");
 //mysql
 const mysql = require("mysql2/promise");
 const dbConfig = require("../config/db.config2");

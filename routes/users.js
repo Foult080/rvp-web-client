@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const config = require("config");
 const mysql = require("mysql2/promise");
-const dbConfig = require("../config/db.config2");
+const dbConfig = require("../config/db.config");
 const { check, validationResult } = require("express-validator");
 const { v4: genID } = require("uuid");
 const bcrypt = require("bcrypt");
@@ -112,8 +112,8 @@ router.put(
           port: 465,
           secure: true,
           auth: {
-            user: config.get("mailer_user"),
-            pass: config.get("mailer_pass"),
+            user: process.env.MAIL_USER,
+            pass: process.env.MAIL_PASS,
           },
         });
         //send email
